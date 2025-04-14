@@ -83,12 +83,16 @@ export async function findFilesToUpload(
   searchPath: string,
   includeHiddenFiles?: boolean
 ): Promise<SearchResult> {
+  info(`findFilesToUpload(${searchPath}, ${includeHiddenFiles})`)
   const searchResults: string[] = []
   const globber = await glob.create(
     searchPath,
     getDefaultGlobOptions(includeHiddenFiles || false)
   )
+
+  info(`globber = ${JSON.stringify(globber)}`)
   const rawSearchResults: string[] = await globber.glob()
+  info(`rawSearchResults = ${rawSearchResults}`)
 
   /*
     Files are saved with case insensitivity. Uploading both a.txt and A.txt will files to be overwritten
@@ -123,7 +127,9 @@ export async function findFilesToUpload(
   }
 
   // Calculate the root directory for the artifact using the search paths that were utilized
+  info(`Calling globber.getSearchPaths()`)
   const searchPaths: string[] = globber.getSearchPaths()
+  info(`searchPaths = ${searchPaths}`)
 
   if (searchPaths.length > 1) {
     info(
